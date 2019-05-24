@@ -1,24 +1,26 @@
 package com.example.cooltimer;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.CountDownTimer;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
-import android.widget.Switch;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener, View.OnClickListener {
 
     CountDownTimer timer;
+    MediaPlayer mediaPlayer;
 
     final int DEFAULT_PROGRESS = 30;
-    private int minutes;
-    private int seconds;
 
     SeekBar seekBar;
     TextView textView;
@@ -39,29 +41,36 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         button.setOnClickListener(this);
     }
 
+    @SuppressLint("SetTextI18n")
     public void timeByDefault() {
         seekBar.setProgress(DEFAULT_PROGRESS);
-        minutes = seekBar.getProgress() / 60;
-        seconds = seekBar.getProgress() % 60;
+        int minutes = seekBar.getProgress() / 60;
+        int seconds = seekBar.getProgress() % 60;
         seekBar.setProgress(DEFAULT_PROGRESS);
         button.setText("start");
         seekBar.setEnabled(true);
         textView.setText(minutes + ":" + seconds);
     }
 
-    public void startTimer(){
-            timer = new CountDownTimer(
+    public void startTimer() {
+        timer = new CountDownTimer(
                 seekBar.getProgress() * 1000, 1000) {
             @SuppressLint("SetTextI18n")
             @Override
             public void onTick(long millisUntilFinished) {
+                int minutes = (int) millisUntilFinished / 1000 / 60;
+                int seconds = (int) millisUntilFinished / 1000 % 60;
                 button.setText("stop");
                 seekBar.setEnabled(false);
-                textView.setText((int)millisUntilFinished / 1000 / 60 + ":" + (int)millisUntilFinished / 1000 % 60);
+                seekBar.setProgress(minutes + seconds);
+                textView.setText(minutes + ":" + seconds);
             }
 
             @Override
             public void onFinish() {
+                mediaPlayer = MediaPlayer.create(getApplicationContext(),
+                        R.raw.crank_2);
+                mediaPlayer.start();
                 timeByDefault();
             }
         }.start();
@@ -85,16 +94,35 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.button:
-                if (button.getText().equals("start")) {
-                    startTimer();
-                }
-                else if (button.getText().equals("stop")){
-                    timer.cancel();
-                    timeByDefault();
-                }
-                break;
+        if (v.getId() == R.id.button) {
+            if (button.getText().equals("start")) {
+                startTimer();
+            } else if (button.getText().equals("stop")) {
+                timer.cancel();
+                timeByDefault();
+            }
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.timer_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Intent openSettings = new Intent(this, SettingsActivity.class);
+                startActivity(openSettings);
+                return true;
+            case R.id.action_about:
+                Intent openAbout = new Intent(this, AboutActivity.class);
+                startActivity(openAbout);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
