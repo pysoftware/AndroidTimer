@@ -2,8 +2,10 @@ package com.example.cooltimer;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.CountDownTimer;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -68,9 +70,13 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
             @Override
             public void onFinish() {
-                mediaPlayer = MediaPlayer.create(getApplicationContext(),
-                        R.raw.crank_2);
-                mediaPlayer.start();
+                SharedPreferences sharedPreferences =
+                        PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                if (sharedPreferences.getBoolean("enable_sound", true)){
+                    mediaPlayer = MediaPlayer.create(getApplicationContext(),
+                            R.raw.crank_2);
+                    mediaPlayer.start();
+                }
                 timeByDefault();
             }
         }.start();

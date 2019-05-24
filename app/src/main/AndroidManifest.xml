@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning"
-        android:fullBackupContent=""
+        android:fullBackupContent="false"
         android:allowBackup="true">
         <activity
             android:name=".AboutActivity"
