@@ -73,9 +73,18 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 SharedPreferences sharedPreferences =
                         PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 if (sharedPreferences.getBoolean("enable_sound", true)){
-                    mediaPlayer = MediaPlayer.create(getApplicationContext(),
-                            R.raw.crank_2);
-                    mediaPlayer.start();
+                    String melodyName = sharedPreferences.getString("timer_melody", "first");
+                    assert melodyName != null;
+                    if (melodyName.equals("first")) {
+                        mediaPlayer = MediaPlayer.create(getApplicationContext(),
+                                R.raw.crank_1);
+                        mediaPlayer.start();
+                    }
+                    else if (melodyName.equals("second")) {
+                        mediaPlayer = MediaPlayer.create(getApplicationContext(),
+                                R.raw.crank_2);
+                        mediaPlayer.start();
+                    }
                 }
                 timeByDefault();
             }

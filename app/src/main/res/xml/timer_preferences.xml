@@ -2,13 +2,17 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <CheckBoxPreference
-
         android:defaultValue="true"
         android:key="enable_sound"
-        android:title="Enable Sound"
         android:summaryOff="Sound Disabled"
         android:summaryOn="Sound Enabled"
+        android:title="Enable Sound" />
 
-        />
+    <ListPreference
+        android:title="Timer Melody"
+        android:key="timer_melody"
+        android:defaultValue="first"
+        android:entries="@array/pref_timer_melody_labels"
+        android:entryValues="@array/pref_timer_melody_values" />
 
 </PreferenceScreen>
