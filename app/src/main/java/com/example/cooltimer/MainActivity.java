@@ -4,8 +4,10 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,12 +19,17 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener, View.OnClickListener {
+import java.util.Objects;
+
+public class MainActivity extends AppCompatActivity implements
+        SeekBar.OnSeekBarChangeListener, View.OnClickListener,
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
     CountDownTimer timer;
     MediaPlayer mediaPlayer;
 
-    final int DEFAULT_PROGRESS = 30;
+    private int defaultInterval;
+    SharedPreferences sharedPreferences;
 
     SeekBar seekBar;
     TextView textView;
@@ -33,6 +40,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
         textView = findViewById(R.id.text);
         button = findViewById(R.id.button);
         seekBar = findViewById(R.id.seekBar);
@@ -41,14 +50,16 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
         seekBar.setOnSeekBarChangeListener(this);
         button.setOnClickListener(this);
+
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @SuppressLint("SetTextI18n")
     public void timeByDefault() {
-        seekBar.setProgress(DEFAULT_PROGRESS);
+        setIntervalFromSharedPreference(sharedPreferences);
         int minutes = seekBar.getProgress() / 60;
         int seconds = seekBar.getProgress() % 60;
-        seekBar.setProgress(DEFAULT_PROGRESS);
         button.setText("start");
         seekBar.setEnabled(true);
         textView.setText(minutes + ":" + seconds);
@@ -139,5 +150,29 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @SuppressLint("SetTextI18n")
+    private void setIntervalFromSharedPreference(SharedPreferences sharedPreference){
+        defaultInterval = Integer.valueOf(
+                Objects.<String>requireNonNull(
+                        sharedPreference.getString("timer default interval", "30")));
+        textView.setText("0:"+defaultInterval);
+        seekBar.setProgress(defaultInterval);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals("timer default interval")){
+            setIntervalFromSharedPreference(sharedPreferences);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
     }
 }

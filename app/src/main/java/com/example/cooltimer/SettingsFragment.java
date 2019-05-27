@@ -2,6 +2,7 @@ package com.example.cooltimer;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.ListPreference;
 import android.preference.PreferenceFragment;
@@ -41,6 +42,8 @@ public class SettingsFragment extends PreferenceFragmentCompat
             if (index >= 0){
                 listPreference.setSummary(listPreference.getEntries()[index]);
             }
+        } else if (preference instanceof EditTextPreference){
+            preference.setSummary(value);
         }
     }
 

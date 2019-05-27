@@ -15,4 +15,9 @@
         android:entries="@array/pref_timer_melody_labels"
         android:entryValues="@array/pref_timer_melody_values" />
 
+    <EditTextPreference
+        android:title="Timer Default Interval"
+        android:key="timer default interval"
+        android:defaultValue="30"/>
+
 </PreferenceScreen>
