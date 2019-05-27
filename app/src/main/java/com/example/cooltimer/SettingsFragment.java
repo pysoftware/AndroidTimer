@@ -7,7 +7,6 @@ import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
-import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.PreferenceScreen;
 import android.widget.Toast;
 
@@ -79,7 +78,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
         if (preference.getKey().equals("timer default interval")){
             String defaultIntervalString = (String) o;
             try{
-                int defaultInterval = Integer.parseInt(defaultIntervalString);
+                Integer.parseInt(defaultIntervalString);
             } catch (Exception exception){
                 Toast.makeText(getContext(), "Use only numbers to set time",
                         Toast.LENGTH_SHORT).show();
