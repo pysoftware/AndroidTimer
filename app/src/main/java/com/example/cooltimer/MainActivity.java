@@ -10,7 +10,6 @@ import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -18,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Objects;
 
@@ -28,13 +28,13 @@ public class MainActivity extends AppCompatActivity implements
     CountDownTimer timer;
     MediaPlayer mediaPlayer;
 
-    private int defaultInterval;
     SharedPreferences sharedPreferences;
 
     SeekBar seekBar;
     TextView textView;
     Button button;
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements
                 textView.setText(minutes + ":" + seconds);
             }
 
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onFinish() {
                 SharedPreferences sharedPreferences =
@@ -118,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.button) {
@@ -154,11 +156,11 @@ public class MainActivity extends AppCompatActivity implements
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @SuppressLint("SetTextI18n")
-    private void setIntervalFromSharedPreference(SharedPreferences sharedPreference){
-        defaultInterval = Integer.valueOf(
-                Objects.<String>requireNonNull(
+    private void setIntervalFromSharedPreference(SharedPreferences sharedPreference) {
+        int defaultInterval = Integer.valueOf(
+                Objects.requireNonNull(
                         sharedPreference.getString("timer default interval", "30")));
-        textView.setText("0:"+defaultInterval);
+        textView.setText("0:" + defaultInterval);
         seekBar.setProgress(defaultInterval);
     }
 

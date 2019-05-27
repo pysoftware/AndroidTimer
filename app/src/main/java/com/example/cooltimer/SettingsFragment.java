@@ -5,15 +5,16 @@ import android.os.Bundle;
 import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.ListPreference;
-import android.preference.PreferenceFragment;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.PreferenceScreen;
+import android.widget.Toast;
 
-import java.util.List;
 
 public class SettingsFragment extends PreferenceFragmentCompat
-        implements SharedPreferences.OnSharedPreferenceChangeListener {
+        implements SharedPreferences.OnSharedPreferenceChangeListener,
+        Preference.OnPreferenceChangeListener {
 
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
@@ -33,6 +34,9 @@ public class SettingsFragment extends PreferenceFragmentCompat
                 setPreferencesLabel(preference, value);
             }
         }
+
+        Preference preference = findPreference("timer default interval");
+        preference.setOnPreferenceChangeListener(this);
     }
 
     private void setPreferencesLabel(Preference preference, String value){
@@ -68,5 +72,20 @@ public class SettingsFragment extends PreferenceFragmentCompat
         super.onDestroy();
         getPreferenceScreen().getSharedPreferences()
                 .unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object o) {
+        if (preference.getKey().equals("timer default interval")){
+            String defaultIntervalString = (String) o;
+            try{
+                int defaultInterval = Integer.parseInt(defaultIntervalString);
+            } catch (Exception exception){
+                Toast.makeText(getContext(), "Use only numbers to set time",
+                        Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+        return true;
     }
 }
